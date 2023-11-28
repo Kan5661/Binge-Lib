@@ -5,13 +5,14 @@
   "description": "",
   "author": "",
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --port 3000",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "main": "index.js",
   "dependencies": {
+    "@consumet/extensions": "^1.5.4",
     "core-js": "^3.8.3",
     "vue": "^3.3.8"
   },

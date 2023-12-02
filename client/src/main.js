@@ -1,10 +1,8 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router"; // Import your router configuration
 
-const app = createApp(App)
+const app = createApp(App);
+app.use(router); // Connect the router to your app
 
-app.config.errorHandler = (err) => {
-    console.log('Global error handler', err)
-}
-
-app.mount('#app')
+app.mount("#app");

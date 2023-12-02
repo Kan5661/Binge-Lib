@@ -14,7 +14,8 @@
   "dependencies": {
     "@consumet/extensions": "^1.5.4",
     "core-js": "^3.8.3",
-    "vue": "^3.3.8"
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

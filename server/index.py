@@ -31,7 +31,7 @@ try:
     # Display fetched data
     for row in rows:
         print(row)
-    
+
     conn.commit()
 
 except (Exception, psycopg2.Error) as error:

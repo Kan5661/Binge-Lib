@@ -11,6 +11,7 @@ load_dotenv()
 def fetch_user_table():
     try:
         # Establish connection to the PostgreSQL database
+        print("fetching user table")
         conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
         # Create a cursor object using the connection

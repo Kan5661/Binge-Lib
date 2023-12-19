@@ -1,9 +1,7 @@
 <template>
-    <div>
+    <div class="HomePage">
         <h1>Home</h1>
-        <p>Home page body content</p>
         <h2>Message from API: {{ message }}</h2>
-
     </div>
 </template>
 
@@ -33,7 +31,11 @@ export default {
 </script>
 
 <style scoped>
-/* Your component-specific styles */
+    .HomePage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 </style>
 
 

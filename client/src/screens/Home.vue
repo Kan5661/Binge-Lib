@@ -1,18 +1,27 @@
 <template>
     <div class="HomePage">
-        <h1>Home</h1>
-        <h2>Message from API: {{ message }}</h2>
+        <h1>Welcome to Binge Lib!</h1>
+        <h2>Testing endpoint from flask server: {{ message }}</h2>
+        <button @click="logout">Log out</button>
     </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import { fetchData } from '@/api/test.js'
+import { useAuthStore } from '@/store/authStore';
+import { useRouter } from 'vue-router';
 
 export default {
     name: 'HomePage',
     setup() {
-        const message = ref(''); // Declare reactive variable
+        const message = ref('');
+        const authStore = useAuthStore();
+        const router = useRouter();
+        const logout = () => {
+            authStore.logout();
+            router.push({ name: 'Login' });
+        };
 
         onMounted(async () => {
             try {
@@ -25,6 +34,7 @@ export default {
 
         return {
             message,
+            logout,
         };
     },
 };

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { registerUser } from '@/api/api.auth';
 export default {
     name: "RegisterPage",
     data() {
@@ -25,15 +25,10 @@ export default {
     },
     methods: {
         submitForm() {
-            axios.post('http://localhost:3001/register', {
+            registerUser({
                 username: this.username,
                 password: this.password,
-                email: this.email,
-            }).then((res) => {
-                console.log(res);
-                // this.$router.push('/');
-            }).catch((err) => {
-                console.log(err);
+                email: this.email
             })
         }
     }

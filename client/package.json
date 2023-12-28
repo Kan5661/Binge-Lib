@@ -12,9 +12,9 @@
   },
   "main": "index.js",
   "dependencies": {
-    "@consumet/extensions": "^1.5.4",
     "axios": "^1.6.2",
     "core-js": "^3.8.3",
+    "jsonwebtoken": "^9.0.2",
     "pinia": "^2.1.7",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"

@@ -7,6 +7,8 @@
             <input type="password" v-model="password" placeholder="Password">
             <input type="password" v-model="reEnterPassword" placeholder="Re-enter Password">
             <button type="submit">Register</button>
+            <button @click="routeLogin">Login</button>
+            <p>{{ accountCreationMessage }}</p>
         </form>
     </div>
 </template>
@@ -14,6 +16,8 @@
 <script>
 import { registerUser } from '@/api/api.auth';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 export default {
     name: "RegisterPage",
     setup() {
@@ -22,6 +26,7 @@ export default {
         const password = ref('')
         const reEnterPassword = ref('')
         const accountCreationMessage = ref('')
+        const router = useRouter()
 
         const submitForm = async () => {
             try {
@@ -40,7 +45,12 @@ export default {
 
             } catch (error) {
                 console.error('Register failed:', error)
+                accountCreationMessage.value = error.response.data.message
             }
+        }
+
+        const routeLogin = () => {
+            router.push({ name: 'Login' })
         }
 
         return {
@@ -49,6 +59,8 @@ export default {
             password,
             reEnterPassword,
             submitForm,
+            accountCreationMessage,
+            routeLogin,
         }
     }
 }

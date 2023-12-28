@@ -6,7 +6,10 @@
 
 <script>
 export default {
-    // Component logic goes here
+    name: 'App',
+    mounted() {
+        document.title = 'BingeLib';
+    }
 };
 </script>
 

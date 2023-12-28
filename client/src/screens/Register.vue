@@ -13,23 +13,42 @@
 
 <script>
 import { registerUser } from '@/api/api.auth';
+import { ref } from 'vue';
 export default {
     name: "RegisterPage",
-    data() {
-        return {
-            username: '',
-            password: '',
-            email: '',
-            reEnterPassword: ''
+    setup() {
+        const username = ref('')
+        const email = ref('')
+        const password = ref('')
+        const reEnterPassword = ref('')
+        const accountCreationMessage = ref('')
+
+        const submitForm = async () => {
+            try {
+                const res = await registerUser({
+                    username: username.value,
+                    email: email.value,
+                    password: password.value,
+                })
+
+                if (res.status === 200) {
+                    console.log("account created")
+                    console.log(res)
+                    accountCreationMessage.value = res.data.message
+                }
+
+
+            } catch (error) {
+                console.error('Register failed:', error)
+            }
         }
-    },
-    methods: {
-        submitForm() {
-            registerUser({
-                username: this.username,
-                password: this.password,
-                email: this.email
-            })
+
+        return {
+            username,
+            email,
+            password,
+            reEnterPassword,
+            submitForm,
         }
     }
 }

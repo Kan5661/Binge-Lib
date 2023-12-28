@@ -5,6 +5,7 @@
         <input type="text" v-model="username" placeholder="Username">
         <input type="password" v-model="password" placeholder="Password">
         <button type="submit">Login</button>
+        <button @click="routeRegister">Register</button>
       </form>
     </div>
   </template>
@@ -30,11 +31,16 @@
           console.error('Login failed:', error);
         }
       };
+
+        const routeRegister = () => {
+            router.push({ name: 'Register' });
+        };
   
       return {
         username,
         password,
         submitForm,
+        routeRegister,
       };
     },
   };

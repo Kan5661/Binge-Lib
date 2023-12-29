@@ -16,8 +16,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins='http://localhost:3000')
 jwt = JWTManager(app)
-app.config['JWT_SECRET_KEY'] = util.generate_secret_key(32)
-
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
 def connect_db():
     conn = connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
@@ -38,10 +37,12 @@ def index():
 @app.route('/register', methods=['POST'])
 def register():
     try:
+        verification_code = util.generate_auth_code(12)
+        print(verification_code)
         data = request.json
         conn = connect_db()
         cur = conn.cursor(cursor_factory=extras.RealDictCursor)
-        cur.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)", (data['username'], data['password'], data['email']))
+        cur.execute("INSERT INTO unverified_users (username, password, email, code) VALUES (%s, %s, %s, %s)", (data['username'], data['password'], data['email'], verification_code))
         conn.commit()
         cur.close()
         conn.close()
@@ -59,7 +60,7 @@ def login():
         print(data)
         conn = connect_db()
         cur = conn.cursor(cursor_factory=extras.RealDictCursor)
-        cur.execute("SELECT * FROM users WHERE username = %s AND password = %s", (data['username'], data['password']))
+        cur.execute("SELECT * FROM users WHERE email = %s AND password = %s", (data['email'], data['password']))
         user = cur.fetchone()
         cur.close()
         conn.close()

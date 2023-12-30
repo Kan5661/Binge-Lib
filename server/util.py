@@ -1,28 +1,26 @@
 import string, secrets
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
+import smtplib
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import base64
-
-def create_message(sender, to, subject, message_text):
-    """Create a message for an email."""
-    message = MIMEText(message_text)
-    message['to'] = to
-    message['from'] = sender
-    message['subject'] = subject
-    return {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
-
-def send_message(service, user_id, message):
-    """Send an email message."""
-    try:
-        message = (service.users().messages().send(userId=user_id, body=message).execute())
-        print('Message Id: %s' % message['id'])
-        return message
-    except HttpError as error:
-        print('An error occurred: %s' % error)
+import os
 
 def generate_auth_code(length):
     characters = string.ascii_letters + string.digits
     return ''.join(secrets.choice(characters) for _ in range(length))
 
+def send_mail(sender, to, subject, message_text):
+    message = MIMEMultipart()
+    message["From"] = sender
+    message["To"] = to
+    message["Subject"] = subject
+
+    message.attach(MIMEText(message_text, "plain"))
+
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587  # SSL: 465, TLS: 587
+
+    # Login to Gmail SMTP server
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()  # Enable TLS encryption
+        server.login(sender, os.getenv("GMAIL_PASSWORD"))  # Replace with your Gmail password
+        server.send_message(message)

@@ -6,6 +6,10 @@ from psycopg2 import *
 from dotenv import load_dotenv
 from psycopg2 import extras
 import os
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from google.oauth2.credentials import Credentials
+from email.mime.text import MIMEText
 
 import util as util
 
@@ -34,24 +38,6 @@ def verify():
 def index():
     return jsonify({'message': 'Hello World'})
 
-@app.route('/register', methods=['POST'])
-def register():
-    try:
-        verification_code = util.generate_auth_code(12)
-        print(verification_code)
-        data = request.json
-        conn = connect_db()
-        cur = conn.cursor(cursor_factory=extras.RealDictCursor)
-        cur.execute("INSERT INTO unverified_users (username, password, email, code) VALUES (%s, %s, %s, %s)", (data['username'], data['password'], data['email'], verification_code))
-        conn.commit()
-        cur.close()
-        conn.close()
-        print('User created: ' + data['username'] + ' ' + data['password'] + ' ' + data['email'] + ')')
-        return jsonify({'message': 'User created'})
-    except Exception as e:
-        print(str(e))
-        return jsonify({'message': str(e)})
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -71,6 +57,46 @@ def login():
         else:
             print('Wrong credentials')
             return jsonify({'message': 'Wrong credentials'})
+    except Exception as e:
+        return jsonify({'message': str(e)})
+
+@app.route('/register', methods=['POST'])
+def register():
+    try:
+        verification_code = util.generate_auth_code(12)
+        data = request.json
+        conn = connect_db()
+        cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+        cur.execute("INSERT INTO unverified_users (username, password, email, code) VALUES (%s, %s, %s, %s)", (data['username'], data['password'], data['email'], verification_code))
+        conn.commit()
+        cur.close()
+        conn.close()
+        message = "Your account verification code is: " + verification_code + "\n\n" + "Please enter this code in the verification page to verify your account."
+        util.send_mail(sender=os.getenv('GMAIL'), to=request.json['email'], subject='Verification code', message_text=message)
+        return jsonify({'message': 'verification code sent'})
+    except Exception as e:
+        print(str(e))
+        return jsonify({'message': str(e)})
+
+
+@app.route('/code_verification', methods=['POST'])
+def code_verification():
+    try:
+        data = request.json
+        conn = connect_db()
+        cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+        cur.execute("SELECT * FROM unverified_users WHERE code = %s", (data['verification_code'],))
+        user = cur.fetchone()
+        if user:
+            cur.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)", (user['username'], user['password'], user['email']))
+            cur.execute("DELETE FROM unverified_users WHERE code = %s", (data['verification_code'],))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return jsonify({'message': 'User verified'})
+        else:
+            # return error
+            return jsonify({'message': 'Wrong verification code'}), 400
     except Exception as e:
         return jsonify({'message': str(e)})
 

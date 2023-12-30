@@ -10,8 +10,12 @@ export async function authMiddleware(to, from, next) {
             console.log("token sent to backend:" + token)
             const res = await verifyUser(token);
             if (res.status === 200) {
-                next();   
-                console.log(res)
+                next();
+                console.log("token verified");
+            }
+            else {
+                authStore.logout();
+                next({name: 'Login'});
             }
         }
         catch (err) {

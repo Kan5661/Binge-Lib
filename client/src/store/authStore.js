@@ -9,20 +9,17 @@ export const useAuthStore = defineStore({
     isAuthenticated: false,
 }),
   actions: {
-    async login({ username, password }) {
-        try {
-            const res = await loginUser({ username, password });
-            if (res.status == 200) {
-                this.token = res.data.access_token;
-                this.isAuthenticated = true;
-
-                // Store the token in localStorage
-                localStorage.setItem('token', this.token);
-            }
-        } catch (error) {
-            console.error('Error during login:', error);
-            throw error;
+    async login({ email, password }) {
+        const res = await loginUser({ email, password });
+        if (res.status == 200) {
+            this.token = res.data.access_token;
+            this.isAuthenticated = true;
+            localStorage.setItem('token', this.token);
+        } else {
+            console.log(res)
+            return res
         }
+
     },
 
     async logout() {

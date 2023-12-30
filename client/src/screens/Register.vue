@@ -1,20 +1,32 @@
 <template>
     <div class="RegisterPage">
         <h1>Create Account</h1>
-        <form @submit.prevent="submitForm">
-            <input type="text" v-model="username" placeholder="Username">
-            <input type="text" v-model="email" placeholder="Email">
-            <input type="password" v-model="password" placeholder="Password">
-            <input type="password" v-model="reEnterPassword" placeholder="Re-enter Password">
-            <button type="submit">Register</button>
-            <button @click="routeLogin">Login</button>
-            <p>{{ accountCreationMessage }}</p>
-        </form>
+
+        <div v-if="!showVerification">
+            <form @submit.prevent="submitForm">
+                <input type="text" v-model="username" placeholder="Username">
+                <input type="text" v-model="email" placeholder="Email">
+                <input type="password" v-model="password" placeholder="Password">
+                <input type="password" v-model="reEnterPassword" placeholder="Re-enter Password">
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <div v-if="showVerification">
+            <h1>Verification Code sent to {{ email }}</h1>
+            <form @submit.prevent="submit_verification_code">
+                <input type="text" v-model="verificationCode" placeholder="Verification Code">
+                <button type="submit">Submit Verification</button>
+            </form>
+        </div>
+
+        <button @click="routeLogin">Back to Login</button>
+        <p>{{ userNotiMsg }}</p>
     </div>
 </template>
 
 <script>
-import { registerUser } from '@/api/api.auth';
+import { registerUser, account_verification } from '@/api/api.auth';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -25,27 +37,51 @@ export default {
         const email = ref('')
         const password = ref('')
         const reEnterPassword = ref('')
-        const accountCreationMessage = ref('')
+        const userNotiMsg = ref('')
+        const showVerification = ref(false)
+        const verificationCode = ref('')
         const router = useRouter()
 
+
         const submitForm = async () => {
+            if (password.value == reEnterPassword.value && password.value != '' && reEnterPassword.value != '' && email.value != '' && username.value != '') {
+                try {
+                    const res = await registerUser({
+                        username: username.value,
+                        email: email.value,
+                        password: password.value,
+                })
+
+                    if (res.status === 200) {
+                        console.log("verification code created")
+                        console.log(res)
+                        showVerification.value = true
+                    }
+                } 
+                catch (error) {
+                    console.error('Register failed:', error)
+                    userNotiMsg.value = error.response.data.message
+                }
+            } else userNotiMsg.value = 'Please fill in all fields and make sure passwords match'
+        }
+
+        const submit_verification_code = async () => {
             try {
-                const res = await registerUser({
-                    username: username.value,
+                const res = await account_verification({
                     email: email.value,
-                    password: password.value,
+                    verification_code: verificationCode.value,
                 })
 
                 if (res.status === 200) {
                     console.log("account created")
                     console.log(res)
-                    accountCreationMessage.value = res.data.message
+                    userNotiMsg.value = 'Account created! Please login'
+
                 }
-
-
-            } catch (error) {
-                console.error('Register failed:', error)
-                accountCreationMessage.value = error.response.data.message
+            } 
+            catch (error) {
+                console.error('account verification failed:', error)
+                userNotiMsg.value = error.response.data.message
             }
         }
 
@@ -59,8 +95,11 @@ export default {
             password,
             reEnterPassword,
             submitForm,
-            accountCreationMessage,
+            userNotiMsg,
             routeLogin,
+            showVerification,
+            verificationCode,
+            submit_verification_code,
         }
     }
 }
@@ -71,6 +110,8 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+        height: 100vh;
+        background: white;
     }
 
     form {

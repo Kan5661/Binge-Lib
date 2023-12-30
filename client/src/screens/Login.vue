@@ -2,10 +2,10 @@
     <div class="login-container">
       <h1>Login Page</h1>
       <form @submit.prevent="submitForm">
-        <input type="text" v-model="username" placeholder="Username">
+        <input type="text" v-model="email" placeholder="Email">
         <input type="password" v-model="password" placeholder="Password">
         <button type="submit">Login</button>
-        <button @click="routeRegister">Register</button>
+        <button @click="routeRegister">Register Account</button>
       </form>
     </div>
   </template>
@@ -20,12 +20,13 @@
     setup() {
       const username = ref('');
       const password = ref('');
+      const email = ref('');
       const router = useRouter();
       const authStore = useAuthStore();
   
       const submitForm = async () => {
         try {
-          await authStore.login({ username: username.value, password: password.value });
+          await authStore.login({ email: email.value, password: password.value });
           router.push({ name: 'Home' });
         } catch (error) {
           console.error('Login failed:', error);
@@ -41,6 +42,7 @@
         password,
         submitForm,
         routeRegister,
+        email,
       };
     },
   };
@@ -49,11 +51,11 @@
 
 <style scoped>
 .login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-  background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background: rgb(255, 255, 255);
 }
 
 

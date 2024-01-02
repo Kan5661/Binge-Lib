@@ -1,19 +1,23 @@
 <template>
     <div class="HomePage">
-        <h1>Welcome to Binge Lib!</h1>
-        <h2>Testing endpoint from flask server: {{ message }}</h2>
-        <button @click="logout">Log out</button>
+        <MenuTabs></MenuTabs>
+        <div class="MainContent">
+
+        </div>
     </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
-import { fetchData } from '@/api/test.js'
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'vue-router';
+import MenuTabs from '@/components/MenuTabs.vue';
 
 export default {
     name: 'HomePage',
+    components: {
+        MenuTabs
+    },
     setup() {
         const message = ref('');
         const authStore = useAuthStore();
@@ -24,17 +28,18 @@ export default {
         };
 
         onMounted(async () => {
-            try {
-                const data = await fetchData(); // Call the fetchData function
-                message.value = data.message; // Assign fetched data to 'message' variable
-            } catch (error) {
-                console.error(error);
-            }
+
         });
+
+        const IconRoute = () => {
+            router.push({ name: 'Home' });
+        };
 
         return {
             message,
             logout,
+            IconRoute,
+            MenuTabs
         };
     },
 };
@@ -45,6 +50,7 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin: 0;
     }
 </style>
 

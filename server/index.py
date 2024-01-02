@@ -6,9 +6,6 @@ from psycopg2 import *
 from dotenv import load_dotenv
 from psycopg2 import extras
 import os
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
 from email.mime.text import MIMEText
 
 import util as util
@@ -63,10 +60,22 @@ def login():
 @app.route('/register', methods=['POST'])
 def register():
     try:
-        verification_code = util.generate_auth_code(12)
-        data = request.json
         conn = connect_db()
         cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+        # if user already exists
+        cur.execute("SELECT * FROM users WHERE email = %s", (request.json['email'],))
+        user = cur.fetchone()
+        if user:
+            return jsonify({'message': 'this email is already registered'}), 400
+        cur.execute("SELECT * FROM unverified_users WHERE email = %s", (request.json['email'],))
+        unverified_user = cur.fetchone()
+        # if user already exists but not verified
+        if unverified_user:
+            verification_code = unverified_user['code']
+            util.send_mail(sender=os.getenv('GMAIL'), to=request.json['email'], subject='Verification code', message_text='Your account verification code is: ' + verification_code + '\n\n' + 'Please enter this code in the verification page to verify your account.')
+            return jsonify({'message': 'verification code sent'})
+        verification_code = util.generate_auth_code(12)
+        data = request.json
         cur.execute("INSERT INTO unverified_users (username, password, email, code) VALUES (%s, %s, %s, %s)", (data['username'], data['password'], data['email'], verification_code))
         conn.commit()
         cur.close()

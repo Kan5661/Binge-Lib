@@ -17,6 +17,8 @@
   
   export default {
     name: 'LoginPage',
+    components: {
+    },
     setup() {
       const username = ref('');
       const password = ref('');

@@ -45,12 +45,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
     .HomePage {
-        display: flex;
+        /* display: flex;
         flex-direction: column;
         align-items: center;
-        margin: 0;
+        margin: 0; */
     }
 </style>
 

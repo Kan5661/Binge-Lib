@@ -2,15 +2,15 @@
     <div class="top">
         <div class="MainMenu">
                 <div class="ImageContainer">
-                    <img class="Icon" :src=icon alt="" @click="IconRoute">
+                    <img class="Icon" :src=icon alt="" @click=ReRoute(paths.Home)>
                 </div>
                 <div class="Navigation">
-                    <div class="nav-item"> <Icon icon="material-symbols:search" /> Search</div>
-                    <div class="nav-item"> <Icon icon="material-symbols:browse-outline" /> Browse</div>
+                    <div class="nav-item" @click="ReRoute(paths.Search)"> <Icon icon="material-symbols:search" /> Search</div>
+                    <div class="nav-item" @click="ReRoute(paths.Browse)"> <Icon icon="material-symbols:browse-outline" /> Browse</div>
                 </div>
                 <div class="UserMenu">
-                    <div class="usermenu-item"> <Icon icon="mingcute:user-4-fill" /> Profile</div>
-                    <div class="usermenu-item"> <Icon icon="uil:setting" /> Settings</div>
+                    <div class="usermenu-item" @click="ReRoute(paths.Profile)"> <Icon icon="mingcute:user-4-fill" /> Profile</div>
+                    <div class="usermenu-item" @click="ReRoute(paths.Settings)"> <Icon icon="uil:setting" /> Settings</div>
                     
 
                 </div>
@@ -34,8 +34,15 @@ export default {
     setup() {
         const message = ref('');
         const router = useRouter();
-        const IconRoute = () => {
-            router.push({ name: 'Home' });
+        const paths = {
+            Home: 'Home',
+            Search: 'Search',
+            Browse: 'Browse',
+            Profile: 'Profile',
+            Settings: 'Settings'
+        }
+        const ReRoute = (path) => {
+            router.push({ name: path });
         };
 
         onMounted(async () => {
@@ -43,9 +50,10 @@ export default {
         });
         return {
             icon,
-            IconRoute,
+            ReRoute,
             message,
-            Icon
+            Icon,
+            paths
         }
     }
 }

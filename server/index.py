@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from psycopg2 import extras
 import os
 from email.mime.text import MIMEText
+from datetime import timedelta
 
 import util as util
 
@@ -49,7 +50,7 @@ def login():
         conn.close()
         if user:
             print('login successful' )
-            access_token = create_access_token(identity=user['username'])
+            access_token = create_access_token(identity=user['username'], expires_delta=timedelta(minutes=30))
             return jsonify({'message': 'Login successful', 'access_token': access_token})
         else:
             print('Wrong credentials')

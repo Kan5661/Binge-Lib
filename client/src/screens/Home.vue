@@ -1,5 +1,5 @@
 <template>
-    <div class="HomePage">
+    <div class="FullPage">
         <MenuTabs></MenuTabs>
         <div class="MainContent">
 
@@ -39,7 +39,6 @@ export default {
             message,
             logout,
             IconRoute,
-            MenuTabs
         };
     },
 };

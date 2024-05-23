@@ -63,7 +63,7 @@ export default {
 
 <style scoped>
 .top {
-        height: 80px;
+        height: 65px;
         width: 100vw;
         border-bottom: 1px solid rgb(215, 215, 215);
         display: flex;
@@ -75,7 +75,7 @@ export default {
         height: 100%;
         width: 80%;
         align-items: center;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
     }
 
@@ -83,7 +83,7 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 70%;
+        height: 75%;
     }
 
     .Icon {

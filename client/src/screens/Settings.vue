@@ -1,6 +1,9 @@
 <template>
     <div class="Homepage">
         <MenuTabs></MenuTabs>
+        <div class="PageContent">
+        
+        </div>
     </div>
 </template>
 
@@ -15,7 +18,6 @@ export default {
     },
     setup() {
         return {
-            MenuTabs
         }
     }
 }
